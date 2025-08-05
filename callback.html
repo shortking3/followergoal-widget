@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OAuth Callback</title>
+</head>
+<body>
+  <h2>Authorizing with Twitch...</h2>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+
+    if (!code) {
+      document.body.innerHTML = "No code found in URL.";
+      throw new Error("No authorization code.");
+    }
+
+    // Replace these with your real values:
+    const clientId = '5yvobduv2cnv0yjs9ys1z0wylslsdw';
+    const clientSecret = '9r229i80l57vna8vncvpisus0oi4pb';
+    const redirectUri = 'https://shortking3.github.io/followergoal-widget/callback.html';
+
+    fetch('https://id.twitch.tv/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: redirectUri
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Access token:", data.access_token);
+
+      // For development: store token in localStorage
+      localStorage.setItem('twitch_token', data.access_token);
+
+      document.body.innerHTML = `<p>✅ Authorization successful! You may now <a href="followergoal.html">open the widget</a>.</p>`;
+    })
+    .catch(err => {
+      console.error("Token exchange failed:", err);
+      document.body.innerHTML = "❌ Authorization failed.";
+    });
+  </script>
+</body>
+</html>
