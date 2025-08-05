@@ -42,29 +42,14 @@
 
     #goal-fill {
       height: 100%;
-      width: 0%;
-      background: linear-gradient(
-        120deg,
-        rgba(255, 0, 0, 0.8) 25%,
-        rgba(255, 50, 50, 0.9) 50%,
-        rgba(255, 0, 0, 0.8) 75%
-      );
-      background-size: 200% 100%;
-      animation: slide 2s linear infinite;
-      transition: width 0.6s ease;
+      width: 29%;
+      background: url('https://i.sstatic.net/iJfuc.gif');
+      background-size: cover;
+      animation: pulseAnim 3s linear infinite;
       position: absolute;
       top: 0;
       left: 0;
       z-index: 1;
-    }
-
-    @keyframes slide {
-      from {
-        background-position: 200% 0;
-      }
-      to {
-        background-position: -200% 0;
-      }
     }
 
     #goal-text {
@@ -89,57 +74,9 @@
   <div id="goal-wrapper">
     <div id="goal-container">
       <div id="goal-fill"></div>
-      <div id="goal-text">Loading...</div>
+      <div id="goal-text">29 / 100</div>
     </div>
   </div>
-
-  <script>
-    const ACCESS_TOKEN = localStorage.getItem('twitch_token');
-    const CLIENT_ID = '5yvobduv2cnv0yjs9ys1z0wylslsdw'; // Replace with your actual client ID
-    const CHANNEL_NAME = 'shortking3';
-    const GOAL = 100;
-
-    async function getUserId() {
-      const res = await fetch(`https://api.twitch.tv/helix/users?login=${CHANNEL_NAME}`, {
-        headers: {
-          'Authorization': `Bearer ${ACCESS_TOKEN}`,
-          'Client-ID': CLIENT_ID
-        }
-      });
-
-      const data = await res.json();
-      return data.data[0].id;
-    }
-
-    async function getFollowerCount(userId) {
-      const res = await fetch(`https://api.twitch.tv/helix/channels/followers?broadcaster_id=${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${ACCESS_TOKEN}`,
-          'Client-ID': CLIENT_ID
-        }
-      });
-
-      const data = await res.json();
-      return data.total;
-    }
-
-    async function updateGoalBar() {
-      try {
-        const userId = await getUserId();
-        const count = await getFollowerCount(userId);
-        const percent = Math.min(100, (count / GOAL) * 100);
-
-        document.getElementById('goal-fill').style.width = `${percent}%`;
-        document.getElementById('goal-text').innerText = `${count} / ${GOAL}`;
-      } catch (err) {
-        console.error("Error updating goal bar:", err);
-        document.getElementById('goal-text').innerText = `Error / ${GOAL}`;
-      }
-    }
-
-    updateGoalBar();
-    setInterval(updateGoalBar, 60000); // refresh every 60 seconds
-  </script>
 
 </body>
 </html>
