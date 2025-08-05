@@ -42,6 +42,21 @@
       background-color: #111;
       position: relative;
     }
+    #goal-container.glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid white;
+  border-radius: 20px;
+  box-sizing: border-box;
+  z-index: 3;
+  animation: traceBorder 1.5s ease-out forwards;
+  pointer-events: none;
+}
+
 
     #goal-fill {
       height: 100%;
@@ -61,21 +76,7 @@
       z-index: 1;
       border-radius: 20px;
     }
-    #goal-fill.glow::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 3px solid white;
-  border-radius: 20px;
-  opacity: 1;
-  box-shadow: 0 0 10px 5px white;
-  animation: borderGlow 1s ease-out forwards;
-  pointer-events: none;
-  z-index: 3;
-}
+   
 
     #goal-text {
       position: absolute;
@@ -99,20 +100,26 @@
         background-position: -200% 0;
       }
     }
-    @keyframes borderGlow {
+    @keyframes traceBorder {
   0% {
+    clip-path: inset(50% 50% 50% 50%);
     opacity: 1;
-    transform: scale(1);
+  }
+  25% {
+    clip-path: inset(0% 50% 50% 50%);
   }
   50% {
-    opacity: 0.9;
-    transform: scale(1.05);
+    clip-path: inset(0% 0% 50% 50%);
+  }
+  75% {
+    clip-path: inset(0% 0% 0% 50%);
   }
   100% {
+    clip-path: inset(0% 0% 0% 0%);
     opacity: 0;
-    transform: scale(1.1);
   }
 }
+    
 
   </style>
 </head>
@@ -167,11 +174,12 @@ async function updateGoalBar() {
     document.getElementById('goal-fill').style.width = `${percent}%`;
     document.getElementById('goal-text').innerText = `${count} / ${GOAL}`;
 
-    // ✨ Trigger glow if follower count increased
+    // ✨ Trigger outline glow if follower count increased
     if (previousCount !== null && count > previousCount) {
-      const bar = document.getElementById('goal-fill');
-      bar.classList.add('glow');
-      setTimeout(() => bar.classList.remove('glow'), 1200);
+      const container = document.getElementById('goal-container');
+      container.classList.remove('glow');
+      void container.offsetWidth; // Force reflow to restart animation
+      container.classList.add('glow');
     }
 
     previousCount = count;
@@ -183,12 +191,14 @@ async function updateGoalBar() {
 }
 
 
+
     updateGoalBar();
     setInterval(updateGoalBar, 60000); // Update every 60 seconds
   </script>
 
 </body>
 </html>
+
 
 
 
