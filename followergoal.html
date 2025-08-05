@@ -1,132 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Follower Goal</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       background: transparent;
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
+      font-family: Arial, sans-serif;
     }
 
-    .follower-goal {
+    #goal-container {
       width: 400px;
-      padding: 10px 15px;
-      background-color: #111;
-      border: 2px solid #ff2e2e;
-      border-radius: 12px;
-      box-shadow: 0 0 12px rgba(255, 46, 46, 0.5);
-    }
-
-    .goal-label {
-      font-size: 16px;
-      text-align: left;
-      margin-bottom: 6px;
-      color: #ff2e2e;
-    }
-
-    .goal-bar {
-      width: 100%;
-      height: 20px;
-      background-color: #222;
-      border-radius: 10px;
+      height: 40px;
+      border: 2px solid red;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+      background-color: #111;
+      position: relative;
     }
 
-    .goal-fill {
+    #goal-fill {
       height: 100%;
-      background: linear-gradient(to right, #ff2e2e, #ff0000);
-      box-shadow: 0 0 10px #ff2e2e;
       width: 0%;
-      transition: width 0.4s ease-in-out;
+      background-color: red;
+      transition: width 0.5s ease;
+    }
+
+    #goal-text {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      line-height: 40px;
+      color: white;
+      font-weight: bold;
+      text-shadow: 1px 1px 3px black;
     }
   </style>
 </head>
 <body>
-  <div class="follower-goal">
-    <div class="goal-label">Followers: <span id="goal-count">0 / 100</span></div>
-    <div class="goal-bar">
-      <div class="goal-fill"></div>
-    </div>
+
+  <div id="goal-container">
+    <div id="goal-fill"></div>
+    <div id="goal-text">Loading...</div>
   </div>
 
   <script>
-    const CLIENT_ID = '5yvobduv2cnv0yjs9ys1z0wylslsdw';
-    const ACCESS_TOKEN = 'ojybcbj1k43if6foflef5zgzkkhz41'; // ← replace with your real token
-    const CHANNEL_NAME = 'shortking3'; // ← replace with your Twitch name
-    const GOAL = 100;
+    const ACCESS_TOKEN = localStorage.getItem('twitch_token');
+    const CLIENT_ID = '5yvobduv2cnv0yjs9ys1z0wylslsdw'; // Replace with your actual client ID
+    const CHANNEL_NAME = 'shortking3';  // Your Twitch username
+    const GOAL = 100;                   // Your follower goal
 
     async function getUserId() {
-  try {
-    const res = await fetch(`https://api.twitch.tv/helix/users?login=${CHANNEL_NAME}`, {
-      headers: {
-        'Client-ID': CLIENT_ID,
-        'Authorization': `Bearer ${ACCESS_TOKEN}`
-      }
-    });
+      const res = await fetch(`https://api.twitch.tv/helix/users?login=${CHANNEL_NAME}`, {
+        headers: {
+          'Authorization': `Bearer ${ACCESS_TOKEN}`,
+          'Client-ID': CLIENT_ID
+        }
+      });
 
-    const data = await res.json();
-    console.log("User lookup response:", data);
-
-    if (!data.data || data.data.length === 0) {
-      throw new Error("User not found — check CHANNEL_NAME value");
+      const data = await res.json();
+      return data.data[0].id;
     }
-
-    return data.data[0].id;
-  } catch (err) {
-    console.error("Error in getUserId:", err);
-    throw err;
-  }
-}
-
 
     async function getFollowerCount(userId) {
-  try {
-    const res = await fetch(`https://api.twitch.tv/helix/users/follows?to_id=${userId}`, {
-      headers: {
-        'Client-ID': CLIENT_ID,
-        'Authorization': `Bearer ${ACCESS_TOKEN}`
-      }
-    });
+      const res = await fetch(`https://api.twitch.tv/helix/channels/followers?broadcaster_id=${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${ACCESS_TOKEN}`,
+          'Client-ID': CLIENT_ID
+        }
+      });
 
-    const data = await res.json();
-    console.log("Follower data:", data);
-
-    if (data.total === undefined) {
-      throw new Error("Follower count not found in response");
+      const data = await res.json();
+      return data.total;
     }
 
-    return data.total;
-  } catch (err) {
-    console.error("Error in getFollowerCount:", err);
-    throw err;
-  }
-}
-
     async function updateGoalBar() {
-  try {
-    const userId = await getUserId();
-    console.log("Resolved user ID:", userId);
+      try {
+        const userId = await getUserId();
+        const count = await getFollowerCount(userId);
 
-    const count = await getFollowerCount(userId);
-    console.log("Resolved follower count:", count);
-
-    const percentage = Math.min(100, Math.round((count / GOAL) * 100));
-
-    document.getElementById('follower-count').innerText = `${count} / ${GOAL}`;
-    document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
-  } catch (err) {
-    console.error("Error updating goal bar:", err);
-  }
-}
-
+        const percent = Math.min(100, (count / GOAL) * 100);
+        document.getElementById('goal-fill').style.width = `${percent}%`;
+        document.getElementById('goal-text').innerText = `${count} / ${GOAL}`;
+      } catch (err) {
+        console.error("Error updating goal bar:", err);
+        document.getElementById('goal-text').innerText = `Error / ${GOAL}`;
+      }
+    }
 
     updateGoalBar();
-    setInterval(updateGoalBar, 60000); // update every 60 seconds
+    setInterval(updateGoalBar, 60000); // refresh every 60 seconds
   </script>
+
 </body>
 </html>
