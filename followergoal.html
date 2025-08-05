@@ -152,20 +152,33 @@
       const data = await res.json();
       return data.total;
     }
+let previousCount = null;
 
-    async function updateGoalBar() {
-      try {
-        const userId = await getUserId();
-        const count = await getFollowerCount(userId);
-        const percent = Math.min(100, (count / GOAL) * 100);
+async function updateGoalBar() {
+  try {
+    const userId = await getUserId();
+    const count = await getFollowerCount(userId);
+    const percent = Math.min(100, (count / GOAL) * 100);
 
-        document.getElementById('goal-fill').style.width = `${percent}%`;
-        document.getElementById('goal-text').innerText = `${count} / ${GOAL}`;
-      } catch (err) {
-        console.error("Error updating goal bar:", err);
-        document.getElementById('goal-text').innerText = `Error / ${GOAL}`;
-      }
+    // Update bar width and text
+    document.getElementById('goal-fill').style.width = `${percent}%`;
+    document.getElementById('goal-text').innerText = `${count} / ${GOAL}`;
+
+    // ✨ Trigger glow if follower count increased
+    if (previousCount !== null && count > previousCount) {
+      const bar = document.getElementById('goal-fill');
+      bar.classList.add('glow');
+      setTimeout(() => bar.classList.remove('glow'), 1200);
     }
+
+    previousCount = count;
+
+  } catch (err) {
+    console.error("Error updating goal bar:", err);
+    document.getElementById('goal-text').innerText = `Error / ${GOAL}`;
+  }
+}
+
 
     updateGoalBar();
     setInterval(updateGoalBar, 60000); // Update every 60 seconds
@@ -173,5 +186,6 @@
 
 </body>
 </html>
+
 
 
