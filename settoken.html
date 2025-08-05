@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Set Twitch Token</title>
+  <style>
+    body {
+      background-color: #0e0e10;
+      font-family: Arial, sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    input, button {
+      font-size: 16px;
+      padding: 10px;
+      margin: 10px;
+      width: 400px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    input {
+      background-color: #222;
+      color: #fff;
+    }
+
+    button {
+      background-color: red;
+      color: white;
+      cursor: pointer;
+    }
+
+    .confirm {
+      margin-top: 20px;
+      color: lime;
+    }
+  </style>
+</head>
+<body>
+  <h2>Paste your Twitch Access Token</h2>
+  <input type="text" id="tokenInput" placeholder="Paste access token here..." />
+  <button onclick="setToken()">Set Token</button>
+  <div class="confirm" id="confirmMsg"></div>
+
+  <script>
+    function setToken() {
+      const token = document.getElementById('tokenInput').value;
+      if (!token) {
+        alert("Please enter a token.");
+        return;
+      }
+
+      localStorage.setItem('twitch_token', token);
+      document.getElementById('confirmMsg').innerText = "✅ Token saved in localStorage.";
+    }
+  </script>
+</body>
+</html>
