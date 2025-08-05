@@ -42,21 +42,33 @@
       background-color: #111;
       position: relative;
     }
-    #goal-container.glow::after {
+    #goal-container.glow::before,
+#goal-container.glow::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  width: 50%;
   height: 100%;
   border: 2px solid white;
   border-radius: 20px;
   box-sizing: border-box;
-  z-index: 3;
   pointer-events: none;
-  animation: traceBorder 2.5s ease-out forwards; /* ⏳ slower */
-  box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.9); /* 💡 brighter */
+  opacity: 1;
+  z-index: 3;
+  box-shadow: 0 0 25px 15px white;
 }
+    #goal-container.glow::before {
+  left: 0;
+  border-right: none;
+  animation: glowLeft 3s ease-out forwards;
+}
+
+#goal-container.glow::after {
+  right: 0;
+  border-left: none;
+  animation: glowRight 3s ease-out forwards;
+}
+
 
 
 
@@ -125,6 +137,34 @@
     opacity: 0;
   }
 }
+    @keyframes glowLeft {
+  0% {
+    clip-path: inset(0 100% 100% 0);
+    opacity: 1;
+  }
+  50% {
+    clip-path: inset(0 50% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+
+@keyframes glowRight {
+  0% {
+    clip-path: inset(0 0 100% 100%);
+    opacity: 1;
+  }
+  50% {
+    clip-path: inset(0 0 0 50%);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+
 
     
 
@@ -205,6 +245,7 @@ async function updateGoalBar() {
 
 </body>
 </html>
+
 
 
 
