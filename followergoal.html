@@ -43,17 +43,17 @@
       position: relative;
     }
 
-    #goal-fill {
-      height: 100%;
-      width: 29%;
-      background: url('https://i.sstatic.net/iJfuc.gif');
-      background-size: cover;
-      animation: pulseAnim 3s linear infinite;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
+   #goal-fill {
+  height: 100%;
+  width: 29%;
+  background: url('https://i.sstatic.net/iJfuc.gif') repeat-x;
+  background-size: 200% 100%;
+  animation: pulseAnim 3s linear infinite;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
 
     #goal-text {
       position: absolute;
@@ -68,6 +68,11 @@
       z-index: 2;
       pointer-events: none;
     }
+
+    @keyframes pulseAnim {
+  0% { background-position: 0 0; }
+  100% { background-position: -200% 0; }
+}
   </style>
 </head>
 <body>
@@ -82,3 +87,4 @@
 
 </body>
 </html>
+
