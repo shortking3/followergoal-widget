@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Follower Goal</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+
+    .follower-goal {
+      width: 400px;
+      padding: 10px 15px;
+      background-color: #111;
+      border: 2px solid #ff2e2e;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(255, 46, 46, 0.5);
+    }
+
+    .goal-label {
+      font-size: 16px;
+      text-align: left;
+      margin-bottom: 6px;
+      color: #ff2e2e;
+    }
+
+    .goal-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .goal-fill {
+      height: 100%;
+      background: linear-gradient(to right, #ff2e2e, #ff0000);
+      box-shadow: 0 0 10px #ff2e2e;
+      width: 0%;
+      transition: width 0.4s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="follower-goal">
+    <div class="goal-label">Followers: <span id="goal-count">0 / 100</span></div>
+    <div class="goal-bar">
+      <div class="goal-fill"></div>
+    </div>
+  </div>
+
+  <script>
+    const CLIENT_ID = '5yvobduv2cnv0yjs9ys1z0wylslsdw';
+    const ACCESS_TOKEN = 'ojybcbj1k43if6foflef5zgzkkhz41'; // ← replace with your real token
+    const CHANNEL_NAME = 'shortking3'; // ← replace with your Twitch name
+    const GOAL = 100;
+
+    async function getUserId() {
+  try {
+    const res = await fetch(`https://api.twitch.tv/helix/users?login=${CHANNEL_NAME}`, {
+      headers: {
+        'Client-ID': CLIENT_ID,
+        'Authorization': `Bearer ${ACCESS_TOKEN}`
+      }
+    });
+
+    const data = await res.json();
+    console.log("User lookup response:", data);
+
+    if (!data.data || data.data.length === 0) {
+      throw new Error("User not found — check CHANNEL_NAME value");
+    }
+
+    return data.data[0].id;
+  } catch (err) {
+    console.error("Error in getUserId:", err);
+    throw err;
+  }
+}
+
+
+    async function getFollowerCount(userId) {
+  try {
+    const res = await fetch(`https://api.twitch.tv/helix/users/follows?to_id=${userId}`, {
+      headers: {
+        'Client-ID': CLIENT_ID,
+        'Authorization': `Bearer ${ACCESS_TOKEN}`
+      }
+    });
+
+    const data = await res.json();
+    console.log("Follower data:", data);
+
+    if (data.total === undefined) {
+      throw new Error("Follower count not found in response");
+    }
+
+    return data.total;
+  } catch (err) {
+    console.error("Error in getFollowerCount:", err);
+    throw err;
+  }
+}
+
+    async function updateGoalBar() {
+  try {
+    const userId = await getUserId();
+    console.log("Resolved user ID:", userId);
+
+    const count = await getFollowerCount(userId);
+    console.log("Resolved follower count:", count);
+
+    const percentage = Math.min(100, Math.round((count / GOAL) * 100));
+
+    document.getElementById('follower-count').innerText = `${count} / ${GOAL}`;
+    document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+  } catch (err) {
+    console.error("Error updating goal bar:", err);
+  }
+}
+
+
+    updateGoalBar();
+    setInterval(updateGoalBar, 60000); // update every 60 seconds
+  </script>
+</body>
+</html>
