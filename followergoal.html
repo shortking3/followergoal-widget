@@ -51,8 +51,17 @@
         #ff0000 25%,
         #ff4d4d 50%,
         #ff0000 75%
-      )
-      #goal-fill.glow::after {
+      );
+     
+      background-size: 200% 100%;
+      animation: shimmer 2s linear infinite;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      border-radius: 20px;
+    }
+     #goal-fill.glow::after {
   content: '';
   position: absolute;
   top: 0;
@@ -65,16 +74,7 @@
   animation: glowWrap 1.2s ease-out forwards;
   pointer-events: none;
   z-index: 3;
-    };
-      background-size: 200% 100%;
-      animation: shimmer 2s linear infinite;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-      border-radius: 20px;
-    }
-
+     }
     #goal-text {
       position: absolute;
       width: 100%;
@@ -186,6 +186,7 @@ async function updateGoalBar() {
 
 </body>
 </html>
+
 
 
 
