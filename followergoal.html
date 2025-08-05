@@ -53,9 +53,11 @@
   border-radius: 20px;
   box-sizing: border-box;
   z-index: 3;
-  animation: traceBorder 1.5s ease-out forwards;
   pointer-events: none;
+  animation: traceBorder 2.5s ease-out forwards; /* ⏳ slower */
+  box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.9); /* 💡 brighter */
 }
+
 
 
     #goal-fill {
@@ -102,25 +104,28 @@
         background-position: -200% 0;
       }
     }
-    @keyframes traceBorder {
+   @keyframes traceBorder {
   0% {
     clip-path: inset(50% 50% 50% 50%);
     opacity: 1;
   }
-  25% {
+  20% {
     clip-path: inset(0% 50% 50% 50%);
   }
-  50% {
+  40% {
     clip-path: inset(0% 0% 50% 50%);
   }
-  75% {
+  60% {
     clip-path: inset(0% 0% 0% 50%);
   }
-  100% {
+  80% {
     clip-path: inset(0% 0% 0% 0%);
+  }
+  100% {
     opacity: 0;
   }
 }
+
     
 
   </style>
@@ -200,6 +205,7 @@ async function updateGoalBar() {
 
 </body>
 </html>
+
 
 
 
